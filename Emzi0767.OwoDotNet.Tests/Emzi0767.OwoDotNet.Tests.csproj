@@ -27,4 +27,10 @@
     <ProjectReference Include="..\Emzi0767.OwoDotNet\Emzi0767.OwoDotNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="testimg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

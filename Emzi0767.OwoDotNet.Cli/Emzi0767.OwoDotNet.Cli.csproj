@@ -5,6 +5,18 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(VersionSuffix)' != ''">
+    <Version>1.0.0-git-$(VersionSuffix)</Version>
+    <AssemblyVersion>1.0.0.$(VersionSuffix)</AssemblyVersion>
+    <FileVersion>1.0.0.$(VersionSuffix)</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VersionSuffix)' == ''">
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp1.1;netcoreapp2.0</TargetFrameworks>

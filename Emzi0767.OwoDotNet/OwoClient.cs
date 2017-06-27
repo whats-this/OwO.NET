@@ -74,7 +74,7 @@ namespace Emzi0767.OwoDotNet
                 Path = POMF_UPLOAD
             };
             this.UploadEndpoint = ub.Uri;
-            
+
             // create the shorten URI
             ub = new UriBuilder(this.ApiBaseUri)
             {
@@ -128,6 +128,11 @@ namespace Emzi0767.OwoDotNet
             if (dl > 80 * 1024 * 1024 || dl < 0)
                 throw new ArgumentException("The data needs to be less than 80MiB and greather than 0B long.");
 
+            var b64data = new byte[8];
+            var rnd = new Random();
+            for (var i = 0; i < b64data.Length; i++)
+                b64data[i] = (byte)rnd.Next();
+
             var get_args = new Dictionary<string, string>
             {
                 ["key"] = this.ApiKey
@@ -136,13 +141,16 @@ namespace Emzi0767.OwoDotNet
             var turl = string.Concat(this.UploadEndpoint, "?", this.MakeQueryString(get_args));
 
             var req = new HttpRequestMessage(HttpMethod.Post, new Uri(turl));
-            var mpd = new MultipartFormDataContent(string.Concat("upload------", DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss zzz")));
+            var mpd = new MultipartFormDataContent(string.Concat("---upload-", Convert.ToBase64String(b64data), "---"));
+
+            var bdata = new byte[dl];
+            await s.ReadAsync(bdata, 0, bdata.Length);
 
             var fn = Path.GetFileName(filename);
-            var sc = new StreamContent(s);
+            var sc = new ByteArrayContent(bdata);
             sc.Headers.ContentType = new MediaTypeHeaderValue(MimeTypeMap.GetMimeType(Path.GetExtension(fn)));
 
-            mpd.Add(sc, "files[]", fn);
+            mpd.Add(sc, "files[]", string.Concat("\"", fn.ToLower(), "\""));
 
             req.Content = mpd;
 

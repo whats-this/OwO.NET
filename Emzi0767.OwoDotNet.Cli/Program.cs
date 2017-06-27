@@ -58,7 +58,7 @@ namespace Emzi0767.OwoDotNet
 
                 cfg = JsonConvert.DeserializeObject<OwoConfiguration>(cfgs);
 
-                if (string.IsNullOrWhiteSpace(cfg.ApiKey) || cfg.ApiKey == "your-api-key-here" || cfg.PreferredUri == null)
+                if (string.IsNullOrWhiteSpace(cfg.ApiKey) || cfg.ApiKey == "your-api-key-here" || cfg.UploadUrl == null)
                     throw new InvalidDataException();
             }
             catch (InvalidDataException)
@@ -82,7 +82,7 @@ namespace Emzi0767.OwoDotNet
             {
                 var ups = new Dictionary<string, Uri>();
 
-                using (var owo = new OwoUploader(cfg, v))
+                using (var owo = new OwoClient(cfg))
                 {
                     foreach (var arg in args)
                     {
@@ -100,7 +100,7 @@ namespace Emzi0767.OwoDotNet
                         if (owof.Error == true)
                             throw new Exception(string.Format("OwO upload failed with '{0}'.", owof.Description));
 
-                        var turi = owo.MakeUri(owof.Url, cfg);
+                        var turi = owo.MakeUri(owof.Url);
                         Console.WriteLine("'{0}' uploaded to '{1}'", fi.Name, turi);
 
                         ups[fi.FullName] = turi;

@@ -38,6 +38,8 @@ namespace Emzi0767.OwoDotNet.Tests
                     var url = owo.MakeUri(owof.Url);
 
                     Assert.IsNotNull(url);
+
+                    Console.WriteLine(url);
                 }
 
             }
@@ -80,6 +82,8 @@ namespace Emzi0767.OwoDotNet.Tests
                     var url = owo.MakeUri(owof.Url);
 
                     Assert.IsNotNull(url);
+
+                    Console.WriteLine(url);
                 }
             }
             catch (Exception ex)
@@ -107,6 +111,8 @@ namespace Emzi0767.OwoDotNet.Tests
                     var url = await owo.ShortenUrlAsync(new Uri("https://cdn.discordapp.com/attachments/244905538448523279/329285979225718794/1yd2emqfa16z.png"));
 
                     Assert.IsNotNull(url);
+
+                    Console.WriteLine(url);
                 }
             }
             catch (Exception ex)

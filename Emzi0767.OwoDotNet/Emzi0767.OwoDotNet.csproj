@@ -10,13 +10,24 @@
     <Copyright>Copyright © 2017 by Emzi0767</Copyright>
     <ApplicationIcon />
     <OutputTypeEx>library</OutputTypeEx>
-    <StartupObject />
     <PackageLicenseUrl>https://github.com/Emzi0767/OwoDotNet/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Emzi0767/OwoDotNet</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/24387706?v=3&amp;s=200</PackageIconUrl>
     <RepositoryUrl>https://github.com/Emzi0767/OwoDotNet</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>owo, image, file, upload</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VersionSuffix)' != ''">
+    <Version>1.0.0-git-$(VersionSuffix)</Version>
+    <AssemblyVersion>1.0.0.$(VersionSuffix)</AssemblyVersion>
+    <FileVersion>1.0.0.$(VersionSuffix)</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VersionSuffix)' == ''">
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

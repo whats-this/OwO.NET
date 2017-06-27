@@ -82,7 +82,7 @@ namespace Emzi0767.OwoDotNet
             {
                 var ups = new Dictionary<string, Uri>();
 
-                using (var owo = new OwoUploader(cfg.ApiKey, v))
+                using (var owo = new OwoUploader(cfg, v))
                 {
                     foreach (var arg in args)
                     {

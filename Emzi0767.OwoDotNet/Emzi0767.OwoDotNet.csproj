@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>net45;net46;net47;netstandard1.1;netstandard1.3;netstandard1.6;netstandard2.0</TargetFrameworks>
+    <PackageId>.NET Core client for whats-th.is</PackageId>
+    <Authors>Emzi0767</Authors>
+    <Company>Emzi0767</Company>
+    <Description>.NET Standard library for whats-th.is</Description>
+    <Copyright>Copyright © 2017 by Emzi0767</Copyright>
+    <ApplicationIcon />
+    <OutputTypeEx>library</OutputTypeEx>
+    <StartupObject />
+    <PackageLicenseUrl>https://github.com/Emzi0767/OwoDotNet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Emzi0767/OwoDotNet</PackageProjectUrl>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/24387706?v=3&amp;s=200</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Emzi0767/OwoDotNet</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>owo, image, file, upload</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'!='netstandard2.0'">
+    <PackageReference Include="System.Net.Http" Version="4.3.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net45' Or '$(TargetFramework)'=='net46' Or '$(TargetFramework)'=='net47'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+</Project>

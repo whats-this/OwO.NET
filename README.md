@@ -1,4 +1,4 @@
-﻿# OwO.NET
+﻿# OwO.NET [![Build status](https://ci.appveyor.com/api/projects/status/ff040v0m608g6uui/branch/master?svg=true)](https://ci.appveyor.com/project/Emzi0767/owodotnet/branch/master)
 
 A .NET Standard-compatible wrapper for [OwO](https://owo.whats-th.is/).
 
@@ -18,10 +18,10 @@ The library is compatible with following versions of .NET Framework:
 
 Install [`Emzi0767.OwoDotNet`](https://www.nuget.org/packages/Emzi0767.OwoDotNet) from NuGet.
 
-## Usage
+## Examples
 
-Usage examples are available in the CLI project.
+TODO
 
 ## License
 
-The project is licensed under Apache License 2.0.
+The contents of this repository are licensed under Apache License 2.0. A copy of the Apache License 2.0 can be found in [the LICENSE.txt file](https://github.com/Emzi0767/OwoDotNet/blob/master/LICENSE.txt).

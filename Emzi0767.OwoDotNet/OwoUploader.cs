@@ -13,7 +13,7 @@ namespace Emzi0767.OwoDotNet
     /// </summary>
     public class OwoUploader : IDisposable
     {
-        private const string OWO_API_URL = "https://api.awau.moe/upload/pomf";
+        private const string POMF_UPLOAD = "/upload/pomf";
         private static Encoding Encoding { get; set; } = new UTF8Encoding(false);
 
         /// <summary>
@@ -24,7 +24,17 @@ namespace Emzi0767.OwoDotNet
         /// <summary>
         /// Gets or sets the API key to use for uploading.
         /// </summary>
-        private string ApiKey { get; set; }
+        protected string ApiKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base API uri.
+        /// </summary>
+        protected Uri ApiBaseUri { get; set; }
+
+        /// <summary>
+        /// Gets or sets the upload endpoint.
+        /// </summary>
+        protected Uri UploadEndpoint { get; set; }
 
         private bool _disposed = false;
 
@@ -32,15 +42,22 @@ namespace Emzi0767.OwoDotNet
         /// Creates a new <see cref="OwoUploader"/>.
         /// </summary>
         /// <param name="api_key">API key to use for this uploader.</param>
-        public OwoUploader(string api_key, Version version)
+        public OwoUploader(OwoConfiguration config, Version version)
         {
-            this.ApiKey = api_key;
+            this.ApiKey = config.ApiKey;
+            this.ApiBaseUri = config.ApiBaseUri;
+
+            var ub = new UriBuilder(this.ApiBaseUri)
+            {
+                Path = POMF_UPLOAD
+            };
 
             this.HttpClient = new HttpClient
             {
-                BaseAddress = new Uri(OWO_API_URL)
+                BaseAddress = ub.Uri
             };
-            this.HttpClient.DefaultRequestHeaders.Add("User-Agent", string.Concat("OwoDotNet (https://github.com/Emzi0767/OwoDotNet, v", version.ToString(3), ")"));
+
+            this.HttpClient.DefaultRequestHeaders.Add("User-Agent", string.Concat("WhatsThisClient (https://github.com/Emzi0767/OwoDotNet, v", version.ToString(3), ")"));
         }
 
         /// <summary>
@@ -51,7 +68,11 @@ namespace Emzi0767.OwoDotNet
         /// <returns>Task representing the upload operation.</returns>
         public async Task<OwoResponse> UploadFileAsync(Stream s, string filename)
         {
-            var turl = string.Concat(OWO_API_URL, "?key=", this.ApiKey);
+            var dl = s.Length - s.Position;
+            if (dl > 80 * 1024 * 1024 || dl < 0)
+                throw new ArgumentException("The data needs to be less than 80MiB and greather than 0B long.");
+
+            var turl = string.Concat(this.UploadEndpoint, "?key=", this.ApiKey);
 
             var req = new HttpRequestMessage(HttpMethod.Post, new Uri(turl));
             var mpd = new MultipartFormDataContent(string.Concat("upload------", DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss zzz")));
@@ -80,7 +101,11 @@ namespace Emzi0767.OwoDotNet
         /// <returns>Task representing the upload operation.</returns>
         public async Task<OwoResponse> UploadFileAsync(FileStream fs)
         {
-            var turl = string.Concat(OWO_API_URL, "?key=", this.ApiKey);
+            var dl = fs.Length - fs.Position;
+            if (dl > 80 * 1024 * 1024 || dl < 0)
+                throw new ArgumentException("The data needs to be less than 80MiB and greather than 0B long.");
+
+            var turl = string.Concat(this.UploadEndpoint, "?key=", this.ApiKey);
 
             var req = new HttpRequestMessage(HttpMethod.Post, new Uri(turl));
             var mpd = new MultipartFormDataContent(string.Concat("upload------", DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss zzz")));

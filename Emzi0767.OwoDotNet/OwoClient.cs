@@ -95,7 +95,7 @@ namespace Emzi0767.OwoDotNet
         /// </summary>
         /// <param name="url">Url to shorten.</param>
         /// <returns>Shortened URL.</returns>
-        public async Task<string> ShortenUrlAsync(Uri url)
+        public async Task<Uri> ShortenUrlAsync(Uri url)
         {
             var get_args = new Dictionary<string, string>
             {
@@ -113,7 +113,7 @@ namespace Emzi0767.OwoDotNet
             var buff = await res.Content.ReadAsByteArrayAsync();
             var dat = Encoding.GetString(buff, 0, buff.Length);
 
-            return dat;
+            return this.MakeShortenedUri(dat);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Emzi0767.OwoDotNet
         /// <param name="s">Stream containing the file to upload.</param>
         /// <param name="filename">Name of the file to upload.</param>
         /// <returns>Response from whats-th.is</returns>
-        public async Task<OwoResponse> UploadFileAsync(Stream s, string filename)
+        public async Task<Uri> UploadFileAsync(Stream s, string filename)
         {
             var dl = s.Length - s.Position;
             if (dl > 80 * 1024 * 1024 || dl < 0)
@@ -159,7 +159,13 @@ namespace Emzi0767.OwoDotNet
             var buff = await res.Content.ReadAsByteArrayAsync();
             var json = Encoding.GetString(buff, 0, buff.Length);
 
-            return JsonConvert.DeserializeObject<OwoResponse>(json);
+            var tfn = JsonConvert.DeserializeObject<OwoResponse>(json);
+
+            var owof = tfn.Files.Count < 1 ? throw new Exception("OwO upload errored.") : tfn.Files.First();
+            if (owof.Error == true)
+                throw new Exception(string.Format("OwO upload failed with '{0}'.", owof.Description));
+
+            return this.MakeUploadUri(owof.Url);
         }
 
 #if !NETSTANDARD1_1
@@ -168,21 +174,35 @@ namespace Emzi0767.OwoDotNet
         /// </summary>
         /// <param name="fs">Stream containing the file to upload.</param>
         /// <returns>Response from whats-th.is</returns>
-        public Task<OwoResponse> UploadFileAsync(FileStream fs) =>
+        public Task<Uri> UploadFileAsync(FileStream fs) =>
             this.UploadFileAsync(fs, Path.GetFileName(fs.Name));
 #endif
 
         /// <summary>
-        /// Makes a whats-th.is uri from given filename and config.
+        /// Makes a whats-th.is uri from given filename.
         /// </summary>
         /// <param name="fn">OwO filename.</param>
-        /// <param name="cfg">OwO configuration.</param>
         /// <returns>Created URI.</returns>
-        public Uri MakeUri(string fn)
+        protected Uri MakeUploadUri(string fn)
         {
             var ub = new UriBuilder(this.Configuration.UploadUrl)
             {
                 Path = string.Concat("/", fn)
+            };
+
+            return ub.Uri;
+        }
+        
+        /// <summary>
+        /// Makes a whats-th.is uri from given shortened url.
+        /// </summary>
+        /// <param name="fn">OwO shortened url.</param>
+        /// <returns>Created URI.</returns>
+        protected Uri MakeShortenedUri(string uri)
+        {
+            var ub = new UriBuilder(uri)
+            {
+                Host = this.Configuration.ShortenerUrl.Host
             };
 
             return ub.Uri;

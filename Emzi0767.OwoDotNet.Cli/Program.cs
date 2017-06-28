@@ -73,10 +73,13 @@ namespace Emzi0767.OwoDotNet
                 return;
             }
 
-            RunUploaderAsync(cfg, v, apth, args).GetAwaiter().GetResult();
+            if (args[0] == "-u" || args[0] == "--upload")
+                RunUploaderAsync(cfg, v, apth, args.Skip(1)).GetAwaiter().GetResult();
+            else if (args[0] == "-s" || args[0] == "--shorten")
+                RunShortenerAsync(cfg, v, apth, args.Skip(1)).GetAwaiter().GetResult();
         }
 
-        private static async Task RunUploaderAsync(OwoConfiguration cfg, Version v, string fbp, string[] args)
+        private static async Task RunUploaderAsync(OwoConfiguration cfg, Version v, string fbp, IEnumerable<string> args)
         {
             try
             {
@@ -92,18 +95,13 @@ namespace Emzi0767.OwoDotNet
                         var fi = new FileInfo(arg);
                         Console.WriteLine("Attempting to upload '{0}'...", Path.GetFileName(fi.Name));
 
-                        var tfn = default(OwoResponse);
+                        Uri tfn = null;
                         using (var fs = fi.OpenRead())
                             tfn = await owo.UploadFileAsync(fs);
 
-                        var owof = tfn.Files.Count < 1 ? throw new Exception("OwO upload errored.") : tfn.Files.First();
-                        if (owof.Error == true)
-                            throw new Exception(string.Format("OwO upload failed with '{0}'.", owof.Description));
+                        Console.WriteLine("'{0}' uploaded to '{1}'", fi.Name, tfn);
 
-                        var turi = owo.MakeUri(owof.Url);
-                        Console.WriteLine("'{0}' uploaded to '{1}'", fi.Name, turi);
-
-                        ups[fi.FullName] = turi;
+                        ups[fi.FullName] = tfn;
                     }
                 }
 
@@ -123,6 +121,48 @@ namespace Emzi0767.OwoDotNet
             catch (Exception ex)
             {
                 Console.WriteLine("There was a problem uploading your file(s) to owo. Ensure that all the supplied paths are correct, and that your API key is valid.");
+                Console.WriteLine("{0}: {1}", ex.GetType(), ex.Message);
+                return;
+            }
+        }
+        
+        private static async Task RunShortenerAsync(OwoConfiguration cfg, Version v, string fbp, IEnumerable<string> args)
+        {
+            try
+            {
+                var ups = new Dictionary<Uri, Uri>();
+
+                using (var owo = new OwoClient(cfg))
+                {
+                    foreach (var arg in args)
+                    {
+                        var uri = new Uri(arg);
+                        Console.WriteLine("Attempting to shorten '{0}'...", uri);
+
+                        Uri suri = await owo.ShortenUrlAsync(uri);
+
+                        Console.WriteLine("'{0}' shortened to '{1}'", uri, suri);
+
+                        ups[uri] = suri;
+                    }
+                }
+
+                var rpth = AppContext.BaseDirectory;
+                if (string.IsNullOrWhiteSpace(rpth) || !Directory.Exists(rpth))
+                    rpth = fbp;
+                rpth = Path.Combine(rpth, string.Concat("shorten-", DateTimeOffset.Now.ToString("yyyy-MM-dd-HH-mm-ss"), ".txt"));
+
+                Console.WriteLine("Writing shorten report to '{0}'", rpth);
+
+                using (var fs = File.Create(rpth))
+                using (var sw = new StreamWriter(fs, new UTF8Encoding(false)))
+                    foreach (var xkvp in ups)
+                        sw.WriteLine("'{0}' = '{1}'", xkvp.Key, xkvp.Value);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("There was a problem shortening your url(s) with owo. Ensure that all the supplied urls are correct, and that your API key is valid.");
                 Console.WriteLine("{0}: {1}", ex.GetType(), ex.Message);
                 return;
             }

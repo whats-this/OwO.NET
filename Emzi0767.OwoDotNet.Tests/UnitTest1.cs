@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,18 +27,7 @@ namespace Emzi0767.OwoDotNet.Tests
                 {
                     var res = await owo.UploadFileAsync(fs);
                     
-                    Assert.IsNotNull(res.Files);
-                    Assert.AreNotEqual(0, res.Files.Count);
-
-                    var owof = res.Files.First();
-
-                    Assert.IsNotNull(owof.Url);
-
-                    var url = owo.MakeUri(owof.Url);
-
-                    Assert.IsNotNull(url);
-
-                    Console.WriteLine(url);
+                    Assert.IsNotNull(res);
                 }
 
             }
@@ -71,19 +59,8 @@ namespace Emzi0767.OwoDotNet.Tests
                     ms.Position = 0;
                     
                     var res = await owo.UploadFileAsync(ms, "testimg.png");
-
-                    Assert.IsNotNull(res.Files);
-                    Assert.AreNotEqual(0, res.Files.Count);
-
-                    var owof = res.Files.First();
-
-                    Assert.IsNotNull(owof.Url);
-
-                    var url = owo.MakeUri(owof.Url);
-
-                    Assert.IsNotNull(url);
-
-                    Console.WriteLine(url);
+                    
+                    Assert.IsNotNull(res);
                 }
             }
             catch (Exception ex)
@@ -111,8 +88,6 @@ namespace Emzi0767.OwoDotNet.Tests
                     var url = await owo.ShortenUrlAsync(new Uri("https://cdn.discordapp.com/attachments/244905538448523279/329285979225718794/1yd2emqfa16z.png"));
 
                     Assert.IsNotNull(url);
-
-                    Console.WriteLine(url);
                 }
             }
             catch (Exception ex)

@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' != ''">
-    <Version>1.1.0-git-$(VersionSuffix)</Version>
-    <AssemblyVersion>1.1.0.$(VersionSuffix)</AssemblyVersion>
-    <FileVersion>1.1.0.$(VersionSuffix)</FileVersion>
+    <Version>1.2.0-git-$(VersionSuffix)</Version>
+    <AssemblyVersion>1.2.0.$(VersionSuffix)</AssemblyVersion>
+    <FileVersion>1.2.0.$(VersionSuffix)</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' == ''">
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

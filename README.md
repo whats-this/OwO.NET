@@ -34,8 +34,8 @@ to do that.
 
 ```cs
 var cfgs = "{}";
-using (var fs = File.OpenRead(cpth))
-using (var sr = new StreamReader(fs, utf8))
+using (var fs = File.OpenRead(my_config_path))
+using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
     cfgs = sr.ReadToEnd();
 
 var cfg = JsonConvert.DeserializeObject<OwoConfiguration>(cfgs);
@@ -50,9 +50,7 @@ a file and print out its url to the console.
 using (var owo = new OwoClient(cfg))
 using (var fs = File.OpenRead("testimg.png"))
 {
-    var res = await owo.UploadFileAsync(fs);
-    var owof = res.Files.First();
-	var url = owo.MakeUri(owof.Url);
+    var url = await owo.UploadFileAsync(fs);
 	Console.WriteLine(url);
 }
 ```
@@ -65,9 +63,7 @@ Uploading data from a stream is very similar, except you need to specify a file 
 using (var owo = new OwoClient(cfg))
 using (var s = my_stream)
 {
-    var res = await owo.UploadFileAsync(s, "testimg.png");
-    var owof = res.Files.First();
-	var url = owo.MakeUri(owof.Url);
+    var url = await owo.UploadFileAsync(s, "testimg.png");
     Console.WriteLine(url);
 }
 ```

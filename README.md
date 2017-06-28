@@ -51,7 +51,7 @@ using (var owo = new OwoClient(cfg))
 using (var fs = File.OpenRead("testimg.png"))
 {
     var url = await owo.UploadFileAsync(fs);
-	Console.WriteLine(url);
+    Console.WriteLine(url);
 }
 ```
 

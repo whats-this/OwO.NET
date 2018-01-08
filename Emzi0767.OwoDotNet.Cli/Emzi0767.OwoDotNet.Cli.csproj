@@ -1,42 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFrameworks>net47;netcoreapp2.0</TargetFrameworks>
+    <AssemblyTitle>A command-line utility for uploading files to https://whats-th.is/.</AssemblyTitle>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' != ''">
-    <Version>1.2.0-git-$(VersionSuffix)</Version>
-    <AssemblyVersion>1.2.0.$(VersionSuffix)</AssemblyVersion>
-    <FileVersion>1.2.0.$(VersionSuffix)</FileVersion>
+    <Version>2.0.0-git-$(VersionSuffix)</Version>
+    <AssemblyVersion>$(Version).$(VersionSuffix)</AssemblyVersion>
+    <FileVersion>$(Version).$(VersionSuffix)</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' == ''">
-    <Version>1.2.0</Version>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release' And '$(VersionSuffix)' != ''">
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release' And '$(VersionSuffix)' == ''">
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1;netcoreapp2.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
-    <RuntimeFrameworkVersion>2.0.0-preview3-25424-01</RuntimeFrameworkVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Emzi0767.OwoDotNet\Emzi0767.OwoDotNet.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

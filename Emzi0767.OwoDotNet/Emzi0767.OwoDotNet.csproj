@@ -2,43 +2,39 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net45;net46;net47;netstandard1.1;netstandard1.3;netstandard1.6;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1;netstandard2.0</TargetFrameworks>
     <PackageId>Emzi0767.OwoDotNet</PackageId>
     <Authors>Emzi0767</Authors>
     <Company>Emzi0767</Company>
     <Description>.NET Standard library for whats-th.is</Description>
-    <Copyright>Copyright © 2017 by Emzi0767</Copyright>
+    <Copyright>Copyright © 2017-2018 by Emzi0767</Copyright>
     <ApplicationIcon />
     <OutputTypeEx>library</OutputTypeEx>
-    <PackageLicenseUrl>https://github.com/Emzi0767/OwoDotNet/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Emzi0767/OwoDotNet</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/whats-this/OwO.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/whats-this/OwO.NET</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/24387706?v=3&amp;s=200</PackageIconUrl>
-    <RepositoryUrl>https://github.com/Emzi0767/OwoDotNet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/whats-this/OwO.NET</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>owo, image, file, upload</PackageTags>
+    <PackageTags>owo, image, file, upload, pomf</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' != ''">
-    <Version>1.2.0-git-$(VersionSuffix)</Version>
-    <AssemblyVersion>1.2.0.$(VersionSuffix)</AssemblyVersion>
-    <FileVersion>1.2.0.$(VersionSuffix)</FileVersion>
+    <Version>2.0.0-git-$(VersionSuffix)</Version>
+    <AssemblyVersion>$(Version).$(VersionSuffix)</AssemblyVersion>
+    <FileVersion>$(Version).$(VersionSuffix)</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VersionSuffix)' == ''">
-    <Version>1.2.0</Version>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'!='netstandard2.0'">
-    <PackageReference Include="System.Net.Http" Version="4.3.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='net45' Or '$(TargetFramework)'=='net46' Or '$(TargetFramework)'=='net47'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

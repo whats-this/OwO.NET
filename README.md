@@ -7,11 +7,7 @@ A .NET Standard-compatible wrapper for [OwO](https://owo.whats-th.is/).
 The library is compatible with following versions of .NET Framework:
 
 * .NET Framework 4.5
-* .NET Framework 4.6
-* .NET Framework 4.7
 * .NET Standard 1.1
-* .NET Standard 1.3
-* .NET Standard 1.6
 * .NET Standard 2.0
 
 See [here](https://blogs.msdn.microsoft.com/dotnet/2016/09/26/introducing-net-standard/) for details about .NET Standard.

@@ -1,4 +1,7 @@
 ﻿// Taken from https://github.com/samuelneff/MimeTypeMap
+// Updated to C#7 by me (Emzi0767)
+//
+// This code is licensed under a different license from the rest of this project.
 // License:
 //
 // The MIT License(MIT)
@@ -35,8 +38,8 @@ namespace Emzi0767.OwoDotNet
 
         private static IDictionary<string, string> BuildMappings()
         {
-            var mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-
+            var mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
                 #region Big freaking list of mime types
             
                 // maps both ways,
@@ -711,18 +714,12 @@ namespace Emzi0767.OwoDotNet
                 {"x-world/x-vrml", ".xof"},
 
                 #endregion
-
-                };
+            };
 
             var cache = mappings.ToList(); // need ToList() to avoid modifying while still enumerating
-
             foreach (var mapping in cache)
-            {
                 if (!mappings.ContainsKey(mapping.Value))
-                {
                     mappings.Add(mapping.Value, mapping.Key);
-                }
-            }
 
             return mappings;
         }
@@ -730,51 +727,33 @@ namespace Emzi0767.OwoDotNet
         public static string GetMimeType(string extension)
         {
             if (extension == null)
-            {
-                throw new ArgumentNullException("extension");
-            }
+                throw new ArgumentNullException(nameof(extension));
 
             if (!extension.StartsWith("."))
-            {
                 extension = "." + extension;
-            }
 
-            string mime;
-
-            return _mappings.Value.TryGetValue(extension, out mime) ? mime : "application/octet-stream";
+            extension = extension.ToLowerInvariant();
+            return _mappings.Value.TryGetValue(extension, out var mime) ? mime : "application/octet-stream";
         }
 
         public static string GetExtension(string mimeType)
-        {
-            return GetExtension(mimeType, true);
-        }
+            => GetExtension(mimeType, true);
 
         public static string GetExtension(string mimeType, bool throwErrorIfNotFound)
         {
             if (mimeType == null)
-            {
-                throw new ArgumentNullException("mimeType");
-            }
+                throw new ArgumentNullException(nameof(mimeType));
 
             if (mimeType.StartsWith("."))
-            {
-                throw new ArgumentException("Requested mime type is not valid: " + mimeType);
-            }
+                throw new ArgumentException($"Requested mime type is not valid: {mimeType}");
 
-            string extension;
-
-            if (_mappings.Value.TryGetValue(mimeType, out extension))
-            {
+            if (_mappings.Value.TryGetValue(mimeType, out var extension))
                 return extension;
-            }
+
             if (throwErrorIfNotFound)
-            {
-                throw new ArgumentException("Requested mime type is not registered: " + mimeType);
-            }
+                throw new ArgumentException($"Requested mime type is not registered: {mimeType}");
             else
-            {
                 return string.Empty;
-            }
         }
     }
 }

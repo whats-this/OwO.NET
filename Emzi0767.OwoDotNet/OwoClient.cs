@@ -1,4 +1,20 @@
-﻿using System;
+﻿// This file is part of OwO.NET project
+//
+// Copyright 2017-2018 Emzi0767
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//   http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,37 +35,38 @@ namespace Emzi0767.OwoDotNet
     {
         private const string POMF_UPLOAD = "/upload/pomf";
         private const string POLR_SHORTEN = "/shorten/polr";
-        private static Encoding Encoding { get; set; } = new UTF8Encoding(false);
+        private const string DOMAIN_LIST = "/public-cdn-domains.txt";
+        private static Encoding Encoding { get; } = new UTF8Encoding(false);
 
         /// <summary>
-        /// Gets or sets the <see cref="HttpClient"/> instance to use for this uploader.
+        /// Gets or sets the <see cref="System.Net.Http.HttpClient"/> instance to use for this uploader.
         /// </summary>
-        protected HttpClient HttpClient { get; set; }
+        protected HttpClient HttpClient { get; }
 
         /// <summary>
         /// Gets or sets the API key to use for uploading.
         /// </summary>
-        protected string ApiKey { get; set; }
+        protected string ApiKey { get; }
 
         /// <summary>
         /// Gets or sets the base API uri.
         /// </summary>
-        protected Uri ApiBaseUri { get; set; }
+        protected Uri ApiBaseUri { get; }
 
         /// <summary>
         /// Gets or sets the upload endpoint.
         /// </summary>
-        protected Uri UploadEndpoint { get; set; }
+        protected Uri UploadEndpoint { get; }
 
         /// <summary>
         /// Gets or sets the shorten endpoint.
         /// </summary>
-        protected Uri ShortenEndpoint { get; set; }
+        protected Uri ShortenEndpoint { get; }
 
         /// <summary>
         /// Gets or sets the client's configuration.
         /// </summary>
-        protected OwoConfiguration Configuration { get; set; }
+        protected OwoConfiguration Configuration { get; }
 
         private bool _disposed = false;
 
@@ -64,7 +81,7 @@ namespace Emzi0767.OwoDotNet
                 .Assembly;
             var v = a.GetName().Version;
 
-            this.Configuration = config;
+            this.Configuration = new OwoConfiguration(config);
             this.ApiKey = this.Configuration.ApiKey;
             this.ApiBaseUri = this.Configuration.ApiBaseUri;
 
@@ -82,12 +99,19 @@ namespace Emzi0767.OwoDotNet
             };
             this.ShortenEndpoint = ub.Uri;
 
-            this.HttpClient = new HttpClient
+            // create proxy setting handler
+            var httphandler = new HttpClientHandler
+            {
+                UseProxy = this.Configuration.ProxySettings != null,
+                Proxy = this.Configuration.ProxySettings?.CreateProxy()
+            };
+
+            this.HttpClient = new HttpClient(httphandler)
             {
                 BaseAddress = this.ApiBaseUri
             };
 
-            this.HttpClient.DefaultRequestHeaders.Add("User-Agent", string.Concat("WhatsThisClient (https://github.com/Emzi0767/OwoDotNet, v", v.ToString(3), ")"));
+            this.HttpClient.DefaultRequestHeaders.Add("User-Agent", string.Concat("WhatsThisClient (https://github.com/whats-this/OwO.NET, v", v.ToString(3), ")"));
         }
 
         /// <summary>
@@ -104,7 +128,7 @@ namespace Emzi0767.OwoDotNet
                 ["url"] = url.ToString()
             };
 
-            var turl = string.Concat(this.ShortenEndpoint, "?", this.MakeQueryString(get_args));
+            var turl = string.Concat(this.ShortenEndpoint, "?", get_args.ToQueryString());
 
             var req = new HttpRequestMessage(HttpMethod.Get, new Uri(turl));
 
@@ -125,7 +149,7 @@ namespace Emzi0767.OwoDotNet
         public async Task<Uri> UploadFileAsync(Stream s, string filename)
         {
             var dl = s.Length - s.Position;
-            if (dl > 80 * 1024 * 1024 || dl < 0)
+            if (dl > 80 * 1024 * 1024 || dl <= 0)
                 throw new ArgumentException("The data needs to be less than 80MiB and greather than 0B long.");
 
             var b64data = new byte[8];
@@ -138,7 +162,7 @@ namespace Emzi0767.OwoDotNet
                 ["key"] = this.ApiKey
             };
 
-            var turl = string.Concat(this.UploadEndpoint, "?", this.MakeQueryString(get_args));
+            var turl = string.Concat(this.UploadEndpoint, "?", get_args.ToQueryString());
 
             var req = new HttpRequestMessage(HttpMethod.Post, new Uri(turl));
             var mpd = new MultipartFormDataContent(string.Concat("---upload-", Convert.ToBase64String(b64data), "---"));
@@ -218,18 +242,6 @@ namespace Emzi0767.OwoDotNet
 
             this._disposed = true;
             this.HttpClient.Dispose();
-            this.ApiKey = null;
-        }
-
-        private string MakeQueryString(IDictionary<string, string> args)
-        {
-            if (args == null || args.Count == 0)
-                return string.Empty;
-
-            var vals_collection = args.Select(xkvp => string.Concat(WebUtility.UrlEncode(xkvp.Key), "=", WebUtility.UrlEncode(xkvp.Value)));
-            var vals = string.Join("&", vals_collection);
-
-            return vals;
         }
     }
 }
